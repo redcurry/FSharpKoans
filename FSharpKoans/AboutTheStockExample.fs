@@ -27,6 +27,7 @@ open FSharpKoans.Core
 //---------------------------------------------------------------
 [<Koan(Sort = 15)>]
 module ``about the stock example`` =
+    open System.Globalization
     
     let stockData =
         [ "Date,Open,High,Low,Close,Volume,Adj Close";
@@ -60,6 +61,20 @@ module ``about the stock example`` =
 
     [<Koan>]
     let YouGotTheAnswerCorrect() =
-        let result =  __
+        let parse (line:string) =
+            line.Split(',')
+
+        let toDouble (s:string) =
+            System.Double.Parse(s)
+
+        let openCloseDiff (stockRecord:string[]) =
+            abs (toDouble(stockRecord.[1]) - toDouble(stockRecord.[4]))
+
+        let result =
+            stockData
+            |> List.skip 1  // header
+            |> List.map parse
+            |> List.maxBy openCloseDiff
+            |> Array.head
         
         AssertEquality "2012-03-13" result
